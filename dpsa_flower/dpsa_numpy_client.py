@@ -38,7 +38,7 @@ class DPSANumPyClient(NumPyClient):
         aggregator1_location: str,
         aggregator2_location: str,
         client: NumPyClient,
-        allow_evaluate = false
+        allow_evaluate = False
     ) -> None:
         """
         Parameters
@@ -57,10 +57,10 @@ class DPSANumPyClient(NumPyClient):
             The NumPyClient used for executing the local learning tasks.
         allow_evaluate: bool
             Evaluation is a privacy-relevant operation on the client dataset. If this flag
-            is set to `false`, evaluation always reports infinite loss and zero accuracy to
+            is set to `False`, evaluation always reports infinite loss and zero accuracy to
             the server. Otherwise, the evaluation function of the wrapped client will be used
             and the results will be released to the server, potentially compromising privacy.
-            Defaults to false.
+            Defaults to `False`.
         """
         super().__init__()
         self.max_privacy_per_round = max_privacy_per_round
