@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "dpsa-flower"
+version = "0.1.0"
+description = "A server and client to use the flower framework with DPSA."
+authors = ["Maxim Urschumzew <u.maxim@live.de>"]
+readme = "README.md"
+packages = [{include = "dpsa_flower"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+flwr = "^1.4.0"
+dpsa4fl-bindings = "^0.1.3"
+numpy = "^1.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
