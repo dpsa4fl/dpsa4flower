@@ -72,6 +72,7 @@ class DPSANumPyClient(NumPyClient):
         self.shapes = None
         self.split_indices = None
         self.privacy_spent = 0
+        self.allow_evaluate = allow_evaluate
 
     def get_properties(self, config: Config) -> Dict[str, Scalar]:
         return self.client.get_properties(config)
