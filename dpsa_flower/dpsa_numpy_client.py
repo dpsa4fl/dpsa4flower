@@ -16,7 +16,6 @@ from flwr.common.typing import Config, NDArrays, NDArray, Scalar
 
 from dpsa4fl_bindings import client_api_new_state, client_api_submit, client_api_get_privacy_parameter
 
-
 class DPSANumPyClient(NumPyClient):
     """
     A flower client for federated learning with global differential privacy and
@@ -38,7 +37,8 @@ class DPSANumPyClient(NumPyClient):
         max_privacy_per_round: float,
         aggregator1_location: str,
         aggregator2_location: str,
-        client: NumPyClient
+        client: NumPyClient,
+        allow_evaluate = false
     ) -> None:
         """
         Parameters
@@ -55,6 +55,12 @@ class DPSANumPyClient(NumPyClient):
             For example, for a server running locally: "http://127.0.0.1:9992"
         client: NumPyClient
             The NumPyClient used for executing the local learning tasks.
+        allow_evaluate: bool
+            Evaluation is a privacy-relevant operation on the client dataset. If this flag
+            is set to `false`, evaluation always reports infinite loss and zero accuracy to
+            the server. Otherwise, the evaluation function of the wrapped client will be used
+            and the results will be released to the server, potentially compromising privacy.
+            Defaults to false.
         """
         super().__init__()
         self.max_privacy_per_round = max_privacy_per_round
@@ -251,10 +257,8 @@ class DPSANumPyClient(NumPyClient):
     def evaluate(
         self, parameters: NDArrays, config: Dict[str, Scalar]
     ) -> Tuple[float, int, Dict[str, Scalar]]:
-        """
-        Evaluation is a privacy-relevant operation on the client dataset. Therefore,
-        this function always reports infinite loss and zero accuracy to the server.
-        Evaluation of the learning process can be done locally client-side, using the
-        evaluation function of the wrapped client.
-        """
-        return float('inf'), 1, {"accuracy": 0}
+        if self.allow_evaluate:
+            parameters = self.reshape_parameters(parameters)
+            return self.client.evaluate(parameters, config)
+        else:
+            return float('inf'), 1, {"accuracy": 0}
