@@ -90,8 +90,9 @@ When using our classes in the setup described (and used in the example project),
 
      flower clients                      dpsa4fl infrastructure                     flower server
      --------------                      ----------------------                     -------------
-compute gradients locally                computes aggregate on                    collects aggregate
-   on sensitive data                   ciphertext and adds noise                  distributes updates
-                                        for differential privacy                  back to the clients
-                                     ciphertext never gets decrypted
+compute gradients locally                computes aggregate on                    collects aggregate,
+   on sensitive data                    ciphertext and adds noise                 distributes updates
+                                        for differential privacy,                 back to the clients
+                                     ciphertext can not be decrypted
+                                     unless both servers collaborate
 ```
