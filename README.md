@@ -1,4 +1,4 @@
-# dpsa-flower
+# dpsa4flower
 Server and client to use the [flower framework](https://flower.dev/) for differentially private federated learning with secure aggregation.
 
 Made to be used with the [dpsa infrastructure](https://github.com/dpsa-project/overview), head there for an explanation of the system's participants and properties. Setup of additional aggregation servers is required, head [here](https://github.com/dpsa-project/dpsa4fl-testing-infrastructure) for instructions.
@@ -10,11 +10,11 @@ To install, you require the following packages:
 
 Once you have those, go ahead and clone this repository:
 ```
-> git clone https://github.com/dpsa-project/dpsa-flower.git
+> git clone https://github.com/dpsa-project/dpsa4flower.git
 ```
 Enter the new directory:
 ```
-> cd dpsa-flower
+> cd dpsa4flower
 ```
 Use poetry to create a virtualenv and install all dependencies:
 ```
@@ -28,7 +28,7 @@ There is a [repo](https://github.com/dpsa-project/dpsa4fl-example-project) conta
 
 ## Classes
 This package exposes two classes, one for the server and one for the client.
-### [`DPSAServer`](https://github.com/dpsa-project/dpsa-flower/blob/3f1becb09bb79dfe26f9ee959114cf6c36a31dbb/dpsa_flower/dpsa_server.py#L40)
+### [`DPSAServer`](https://github.com/dpsa-project/dpsa4flower/blob/3f1becb09bb79dfe26f9ee959114cf6c36a31dbb/dpsa_flower/dpsa_server.py#L40)
 The server class extends the flower [server class](https://flower.dev/docs/apiref-flwr.html#module-flwr.server) with the necessities for using DPSA for aggregation. Construction requires the following parameters:
 
 - `model_size: int` The number of parameters of the model to be trained.
@@ -45,7 +45,7 @@ The server class extends the flower [server class](https://flower.dev/docs/apire
     For example, for a server running locally: "http://127.0.0.1:9992"
 
 
-### [`DPSANumPyClient`](https://github.com/dpsa-project/dpsa-flower/blob/3f1becb09bb79dfe26f9ee959114cf6c36a31dbb/dpsa_flower/dpsa_numpy_client.py#L19)
+### [`DPSANumPyClient`](https://github.com/dpsa-project/dpsa4flower/blob/3f1becb09bb79dfe26f9ee959114cf6c36a31dbb/dpsa_flower/dpsa_numpy_client.py#L19)
 The client class implements the [`NumPyClient`](https://flower.dev/docs/apiref-flwr.html#numpyclient) interface provided by flower. It's a wrapper for existing `NumPyClient`s adding secure aggregation and differential privacy. The constructor requires the following parameters:
  
 - `max_privacy_per_round: float` The maximal zero-contentrated differential privacy budget allowed to be spent on a single round of training. If the selected server offers a weaker guarantee, no data will be submitted and an exception will be raised.
