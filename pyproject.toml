@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "dpsa-flower"
+name = "dpsa4flower"
 version = "0.1.0"
 description = "A server and client to use the flower framework with DPSA."
 authors = ["Maxim Urschumzew <u.maxim@live.de>"]
 readme = "README.md"
-packages = [{include = "dpsa_flower"}]
+packages = [{include = "dpsa4flower"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
