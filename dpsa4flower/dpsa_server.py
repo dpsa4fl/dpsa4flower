@@ -10,7 +10,6 @@ from dpsa4fl_bindings import (
     controller_api_create_session,
     controller_api_start_round,
     controller_api_collect,
-    controller_api_get_gradient_len,
     controller_api_end_session,
     PyControllerState
 )

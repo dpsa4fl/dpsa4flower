@@ -2,17 +2,17 @@
 
 [[package]]
 name = "dpsa4fl-bindings"
-version = "0.1.58"
+version = "0.1.59"
 description = ""
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "dpsa4fl_bindings-0.1.58-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:164654683282ffa3245b5a424bf84e58b9747aec8852bf62b96ec002306ea027"},
-    {file = "dpsa4fl_bindings-0.1.58-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c2306eae075e95b4f08b374a8e86fe9103d492a894f1a25255140c6ae7ea309b"},
-    {file = "dpsa4fl_bindings-0.1.58-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:08bacb0703bacc35462bcf9f312b298e71f38d62254496beb6812237ab8b4346"},
-    {file = "dpsa4fl_bindings-0.1.58-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:329ed9dcb26f1253576ca4a361dbb49ed1e7832782d8efaeb42a7cd6dc88a7ba"},
-    {file = "dpsa4fl_bindings-0.1.58.tar.gz", hash = "sha256:e506a99f4bb31663b3cab978c829525656cbdf350da73b9f14d007eaaf0577d4"},
+    {file = "dpsa4fl_bindings-0.1.59-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8e6f423ec825de8fdecf900b0587c0fb81dd365fa3e8789b49c9e3b0b4f1e193"},
+    {file = "dpsa4fl_bindings-0.1.59-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa4da60b084d1aee4349974d6a9487bba1b0f27057e9afb7d3c0194c05492ceb"},
+    {file = "dpsa4fl_bindings-0.1.59-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9d8b714f938a427aa8eb003adfb866544dc3768c3b992867c4d03c885e61461c"},
+    {file = "dpsa4fl_bindings-0.1.59-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2acceb09242cc21320a8d66fbe38546edbf18b49afd987413921349f0f97556b"},
+    {file = "dpsa4fl_bindings-0.1.59.tar.gz", hash = "sha256:f2eff45527a9737467a52b41cf58b9b81421c30af0d802e59295e4c570e26e3d"},
 ]
 
 [[package]]
