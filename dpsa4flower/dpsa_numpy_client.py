@@ -14,7 +14,11 @@ import numpy as np
 from flwr.client.numpy_client import NumPyClient
 from flwr.common.typing import Config, NDArrays, NDArray, Scalar
 
-from dpsa4fl_bindings import client_api_new_state, client_api_submit, client_api_get_privacy_parameter
+from dpsa4fl_bindings import (
+    client_api_new_state,
+    client_api_get_privacy_parameter,
+    client_api_submit,
+)
 
 class DPSANumPyClient(NumPyClient):
     """

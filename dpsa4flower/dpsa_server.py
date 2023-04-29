@@ -47,12 +47,12 @@ class DPSAServer(Server):
 
     def __init__(
         self,
+        *,
         model_size: int,
         privacy_parameter: float,
         granularity: int,
         aggregator1_location: str,
         aggregator2_location: str,
-        *,
         client_manager: ClientManager,
         strategy: Optional[Strategy] = None
     ) -> None:
@@ -88,8 +88,8 @@ class DPSAServer(Server):
         )
 
         dpsa4fl_strategy = DPSAStrategyWrapper(
-            strategy if strategy is not None else FedAvg(),
-            self.dpsa4fl_state
+            strategy = strategy if strategy is not None else FedAvg(),
+            dpsa4fl_state = self.dpsa4fl_state
         )
 
         super().__init__(client_manager=client_manager, strategy=dpsa4fl_strategy)
@@ -127,7 +127,7 @@ class DPSAStrategyWrapper(Strategy):
     global differential privacy and secure aggregation. To be used together
     with the DPSAServer.
     """
-    def __init__(self, strategy: Strategy, dpsa4fl_state: PyControllerState) -> None:
+    def __init__(self, *, strategy: Strategy, dpsa4fl_state: PyControllerState) -> None:
         """
         Parameters
         ----------
