@@ -95,7 +95,9 @@ class DPSAServer(Server):
             print(f"Are aggregator servers running at {aggregator1_location} and {aggregator2_location}?")
             print("=======================================")
             print("")
-            print(f"The original error message is: {err}")
+            print(f"The original error message is:")
+            print("")
+            print({err})
 
         dpsa4fl_strategy = DPSAStrategyWrapper(
             strategy = strategy if strategy is not None else FedAvg(),
