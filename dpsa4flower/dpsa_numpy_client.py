@@ -7,7 +7,7 @@
 
 """Wrapper for configuring a Flower client for usage with DPSA."""
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple, Any, List
 
 import numpy as np
 
@@ -19,6 +19,10 @@ from dpsa4fl_bindings import (
     client_api_get_privacy_parameter,
     client_api_submit,
 )
+
+from reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
+
+
 
 class DPSANumPyClient(NumPyClient):
     """
@@ -73,8 +77,8 @@ class DPSANumPyClient(NumPyClient):
             aggregator1_location,
             aggregator2_location,
         )
-        self.shapes = None
-        self.split_indices = None
+        # self.shapes = None
+        # self.split_indices = None
         self.privacy_spent = 0
         self.allow_evaluate = allow_evaluate
 
@@ -84,7 +88,7 @@ class DPSANumPyClient(NumPyClient):
     def get_parameters(self, config: Dict[str, Scalar]) -> NDArrays:
         return self.client.get_parameters(config)
 
-    def reshape_parameters(self, parameters: NDArrays) -> NDArrays:
+    def reshape_parameters(self, parameters: NDArrays, reshaping_config: Optional[ReshapingConfig]) -> NDArrays:
         """
         Reshape parameters given as a (1,)-NDArray into the Client's model shape,
         as given in the `shapes` attribute. Used for recovering the shape of a
@@ -100,14 +104,16 @@ class DPSANumPyClient(NumPyClient):
         -------
         parameters: NDArrays
             The input parameters reshaped to match this Client's `shapes` attribute.
-            
         """
         # update parameter shapes
         # if we are in first round (self.shapes is None), then we don't need to reshape.
         # But if we are in any following round, then we need to take our previous shapes
         # and lengths and reshape the `parameters` argument accordingly
-        if (self.shapes is not None) and (self.split_indices is not None):
-            assert len(self.split_indices) + 1 == len(self.shapes), "Expected #indices = #shapes - 1"
+        if reshaping_config is not None:
+            shapes = reshaping_config.shapes
+            split_indices = reshaping_config.split_indices
+
+            assert len(split_indices) + 1 == len(shapes), "Expected #indices = #shapes - 1"
 
             print("In follow-up round, reshaping. length of params is: ", len(parameters))
             assert len(parameters) == 1, "Expected parameters to have length 1!"
@@ -121,10 +127,10 @@ class DPSANumPyClient(NumPyClient):
             print("(reshape) highest nonnan element is: ", np.nanmax(single_array))
 
             # split and reshape
-            arrays = np.split(single_array, self.split_indices)
+            arrays = np.split(single_array, split_indices)
             print("After splitting, have ", len(arrays), " arrays")
 
-            arrays = [np.reshape(a,s) for (a,s) in zip(arrays, self.shapes)]
+            arrays = [np.reshape(a,s) for (a,s) in zip(arrays, shapes)]
             print("Now have the following shapes:")
             for a in arrays:
                 print(a.shape)
@@ -142,7 +148,8 @@ class DPSANumPyClient(NumPyClient):
 
         return parameters
 
-    def flatten_parameters(self, params: NDArrays) -> NDArray:
+    # TODO: update docstring (return type)
+    def flatten_parameters(self, params: NDArrays) -> Tuple[NDArray, ReshapingConfig]:
         """
         Reshape the input parameters into a (1,)-NDArray to prepare
         them for sumbission to the DPSA infrastructure.
@@ -157,15 +164,15 @@ class DPSANumPyClient(NumPyClient):
         flat_param_vector: NDArray
             The input parameters reshaped to one long (1,)-NDArray.
         """
-        
+
         # print param shapes
         print("The shapes are:")
         for p in params:
             print(p.shape)
 
         # flatten params before submitting
-        self.shapes = [p.shape for p in params]
-        flat_params = [p.flatten('C') for p in params] #TODO: Check in which order we need to flatten here
+        shapes = [p.shape for p in params]
+        flat_params = [p.flatten('C') for p in params]
         p_lengths = [p.size for p in flat_params]
 
         # loop
@@ -176,7 +183,6 @@ class DPSANumPyClient(NumPyClient):
             split_indices.append(current_index)
             current_index += l
         split_indices.pop(0) # need to throw away first element of list
-        self.split_indices = split_indices
 
 
         flat_param_vector = np.concatenate(flat_params)
@@ -188,7 +194,7 @@ class DPSANumPyClient(NumPyClient):
         print("highest nan element is: ", np.amax(flat_param_vector))
         print("highest nonnan element is: ", np.nanmax(flat_param_vector))
 
-        return flat_param_vector
+        return flat_param_vector, ReshapingConfig(shapes, split_indices)
 
     def fit(
         self, params0: NDArrays, config: Dict[str, Scalar]
@@ -219,13 +225,16 @@ class DPSANumPyClient(NumPyClient):
             A dictionary mapping arbitrary string keys to values of type
             bool, bytes, float, int, or str. It can be used to communicate
             arbitrary values back to the server.
-        """ 
+        """
 
         # get current task_id
         task_id = config['task_id']
 
+        # get reshaping parameters
+        reshaping_config = readReshapingConfig(config)
+
         #reshape params
-        params0 = self.reshape_parameters(params0)
+        params0 = self.reshape_parameters(params0, reshaping_config)
 
         # train on data
         params, i, d = self.client.fit(params0, config)
@@ -233,7 +242,8 @@ class DPSANumPyClient(NumPyClient):
         # compute gradient
         grad = [np.subtract(p, p0) for (p , p0) in zip(params,params0)]
 
-        flat_grad_vector = self.flatten_parameters(grad)
+        flat_grad_vector, new_reshaping_config = self.flatten_parameters(grad)
+        writeReshapingConfig(d, new_reshaping_config)
 
         # truncate if norm >= 1
         norm = np.linalg.norm(flat_grad_vector)
@@ -246,7 +256,7 @@ class DPSANumPyClient(NumPyClient):
 
         # get server privacy parameter
         eps = client_api_get_privacy_parameter(self.dpsa4fl_client_state, task_id)
-        
+
         if eps > self.max_privacy_per_round:
             raise Exception("DPSAClient requested at least " + str(self.max_privacy_per_round) + " privacy but server supplied only " + str(eps))
         else:
@@ -263,7 +273,8 @@ class DPSANumPyClient(NumPyClient):
         self, parameters: NDArrays, config: Dict[str, Scalar]
     ) -> Tuple[float, int, Dict[str, Scalar]]:
         if self.allow_evaluate:
-            parameters = self.reshape_parameters(parameters)
+            reshaping_config = readReshapingConfig(config)
+            parameters = self.reshape_parameters(parameters, reshaping_config)
             return self.client.evaluate(parameters, config)
         else:
             return float('inf'), 1, {"accuracy": 0}

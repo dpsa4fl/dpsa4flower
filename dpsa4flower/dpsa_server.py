@@ -35,6 +35,8 @@ from flwr.server.server import Server, FitResultsAndFailures
 from flwr.server.strategy.aggregate import aggregate, weighted_loss_avg
 from flwr.server.strategy import Strategy, FedAvg
 
+from reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
+
 
 class DPSAServer(Server):
     """
@@ -156,6 +158,7 @@ class DPSAStrategyWrapper(Strategy):
         self.strategy = strategy
         self.dpsa4fl_state = dpsa4fl_state
         self.parameters = Parameters(tensors=[], tensor_type="")
+        self.reshaping_config : Optional[ReshapingConfig] = None
 
     def initialize_parameters(
         self, client_manager: ClientManager
@@ -172,6 +175,10 @@ class DPSAStrategyWrapper(Strategy):
             # add the task_id into the config
             fitins.config['task_id'] = self.dpsa4fl_state.mstate.task_id
 
+            # add the reshaping config if available
+            if self.reshaping_config is not None:
+                writeReshapingConfig(fitins.config, self.reshaping_config)
+
             return (client, fitins)
 
         self.parameters = parameters
@@ -185,8 +192,18 @@ class DPSAStrategyWrapper(Strategy):
         results: List[Tuple[ClientProxy, FitRes]],
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
-        # we do our custom aggregation here.
 
+        # check that the parameter shapes of all clients match
+        reshaping_configs = [readReshapingConfig(res.metrics) for (_, res) in results]
+        print(f"reshaping configs are: {reshaping_configs}")
+        unique_reshaping_configs = list(set(reshaping_configs))
+        if len(unique_reshaping_configs) > 1:
+            print("there have been different reshaping configs")
+            exit(-1);
+        else:
+            self.reshaping_config = unique_reshaping_configs[0]
+
+        # we do our custom aggregation here.
         print("Getting results from janus")
         collected: np.ndarray = controller_api_collect(self.dpsa4fl_state)
         print("Done getting results from janus, vector length is: ", collected.shape)
@@ -199,7 +216,7 @@ class DPSAStrategyWrapper(Strategy):
 
         # if old params is not flat, need to flatten
         if len(old_params_arrays) > 1:
-            flat_old_params = [p.flatten('C') for p in old_params_arrays] #TODO: Check in which order we need to flatten here
+            flat_old_params = [p.flatten('C') for p in old_params_arrays]
             flat_old_params_array = np.concatenate(flat_old_params)
 
         # add gradient to current params
