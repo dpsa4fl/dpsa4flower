@@ -99,6 +99,9 @@ class DPSANumPyClient(NumPyClient):
         ----------
         parameters: NDArrays
             The parameters to be reshaped. Expected to be (1,)-shaped.
+        reshaping_config: Optional[ReshapingConfig]
+            The format to reshape the parameters into. Should be taken from the output of the
+            `flatten_parameters` function. If value is `None`, no reshaping is done.
 
         Returns
         -------
@@ -148,7 +151,6 @@ class DPSANumPyClient(NumPyClient):
 
         return parameters
 
-    # TODO: update docstring (return type)
     def flatten_parameters(self, params: NDArrays) -> Tuple[NDArray, ReshapingConfig]:
         """
         Reshape the input parameters into a (1,)-NDArray to prepare
@@ -163,6 +165,9 @@ class DPSANumPyClient(NumPyClient):
         -------
         flat_param_vector: NDArray
             The input parameters reshaped to one long (1,)-NDArray.
+
+        reshaping_config: ReshapingConfig
+            Format for reshaping the flat array back into its original shape.
         """
 
         # print param shapes

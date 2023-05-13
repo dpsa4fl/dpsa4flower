@@ -12,10 +12,6 @@ class ReshapingConfig(JSONWizard):
     shapes: Shapes
     split_indices: SplitIndices
 
-    # def __init__(self, shapes: Shapes, split_indices: SplitIndices) -> None:
-    #     self.shapes = shapes
-    #     self.split_indices = split_indices
-
 def readReshapingConfig(d: Dict[str, Scalar]) -> Optional[ReshapingConfig]:
     reshaping_config_encoded = d.get('reshaping_config')
 
