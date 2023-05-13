@@ -195,7 +195,6 @@ class DPSAStrategyWrapper(Strategy):
 
         # check that the parameter shapes of all clients match
         reshaping_configs = [res.metrics.get('reshaping_config') for (_, res) in results]
-        print(f"reshaping configs are: {reshaping_configs}")
 
         # NOTE: We have to do the following conversion with the encoded configs
         #       because classes containing lists are not hashable by default

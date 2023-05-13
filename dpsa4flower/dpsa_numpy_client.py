@@ -118,36 +118,20 @@ class DPSANumPyClient(NumPyClient):
 
             assert len(split_indices) + 1 == len(shapes), "Expected #indices = #shapes - 1"
 
-            print("In follow-up round, reshaping. length of params is: ", len(parameters))
             assert len(parameters) == 1, "Expected parameters to have length 1!"
 
             single_array = parameters[0]
-            print("Found single ndarray of shape ", single_array.shape, " and size ", single_array.size)
-            # assert single_array.shape == (,), "Wrong ndarray shape!"
-
-            # debug: print highest element
-            print("(reshape) highest nan element is: ", np.amax(single_array))
-            print("(reshape) highest nonnan element is: ", np.nanmax(single_array))
 
             # split and reshape
             arrays = np.split(single_array, split_indices)
-            print("After splitting, have ", len(arrays), " arrays")
 
             arrays = [np.reshape(a,s) for (a,s) in zip(arrays, shapes)]
-            print("Now have the following shapes:")
-            for a in arrays:
-                print(a.shape)
 
             # check that we have our value at position 449
             rval1 = np.around(arrays[0], decimals = 2)
-            print("in array at 449 have: ", rval1[0:1, 0:1, 0:1, 0:1])
-            print(rval1)
 
             # change parameters to properly shaped list of arrays
             parameters = arrays
-
-        else:
-            print("In first round, not reshaping.")
 
         return parameters
 
@@ -170,11 +154,6 @@ class DPSANumPyClient(NumPyClient):
             Format for reshaping the flat array back into its original shape.
         """
 
-        # print param shapes
-        print("The shapes are:")
-        for p in params:
-            print(p.shape)
-
         # flatten params before submitting
         shapes = [p.shape for p in params]
         flat_params = [p.flatten('C') for p in params]
@@ -191,13 +170,6 @@ class DPSANumPyClient(NumPyClient):
 
 
         flat_param_vector = np.concatenate(flat_params)
-
-
-        print("vector length is: ", flat_param_vector.shape)
-
-        # debug: print highest element
-        print("highest nan element is: ", np.amax(flat_param_vector))
-        print("highest nonnan element is: ", np.nanmax(flat_param_vector))
 
         return flat_param_vector, ReshapingConfig(shapes, split_indices)
 
@@ -252,12 +224,9 @@ class DPSANumPyClient(NumPyClient):
 
         # truncate if norm >= 1
         norm = np.linalg.norm(flat_grad_vector)
-        print("norm of vector is: ", norm)
         if norm >= 1:
-            print("Need to scale vector")
             flat_grad_vector = flat_grad_vector * (1/(norm + 0.01))
             norm = np.linalg.norm(flat_grad_vector)
-            print("now norm of vector is: ", norm)
 
         # get server privacy parameter
         eps = client_api_get_privacy_parameter(self.dpsa4fl_client_state, task_id)
