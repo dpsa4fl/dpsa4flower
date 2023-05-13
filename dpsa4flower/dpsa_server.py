@@ -35,7 +35,7 @@ from flwr.server.server import Server, FitResultsAndFailures
 from flwr.server.strategy.aggregate import aggregate, weighted_loss_avg
 from flwr.server.strategy import Strategy, FedAvg
 
-from reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
+from .reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
 
 
 class DPSAServer(Server):

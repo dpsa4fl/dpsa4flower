@@ -20,7 +20,7 @@ from dpsa4fl_bindings import (
     client_api_submit,
 )
 
-from reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
+from .reshaping_config import ReshapingConfig, readReshapingConfig, writeReshapingConfig
 
 
 
