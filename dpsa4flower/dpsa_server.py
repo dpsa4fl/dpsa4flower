@@ -90,8 +90,11 @@ class DPSAServer(Server):
                 aggregator2_location,
             )
         except RuntimeError as err:
+            print("=======================================")
             print("Could not initialize controller state.")
             print(f"Are aggregator servers running at {aggregator1_location=} and {aggregator2_location=}?")
+            print("=======================================")
+            print("")
             print(f"The original error message is: {err=}")
 
         dpsa4fl_strategy = DPSAStrategyWrapper(
