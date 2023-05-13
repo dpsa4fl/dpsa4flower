@@ -97,7 +97,7 @@ class DPSAServer(Server):
             print("")
             print(f"The original error message is:")
             print("")
-            print({err})
+            print(err)
 
         dpsa4fl_strategy = DPSAStrategyWrapper(
             strategy = strategy if strategy is not None else FedAvg(),
