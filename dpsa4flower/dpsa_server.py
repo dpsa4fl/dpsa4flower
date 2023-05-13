@@ -194,14 +194,20 @@ class DPSAStrategyWrapper(Strategy):
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
 
         # check that the parameter shapes of all clients match
-        reshaping_configs = [readReshapingConfig(res.metrics) for (_, res) in results]
+        reshaping_configs = [res.metrics.get('reshaping_config') for (_, res) in results]
         print(f"reshaping configs are: {reshaping_configs}")
+
+        # NOTE: We have to do the following conversion with the encoded configs
+        #       because classes containing lists are not hashable by default
+        #       and thus a list of them cannot be unique-ified by turning it into a set.
         unique_reshaping_configs = list(set(reshaping_configs))
+
         if len(unique_reshaping_configs) > 1:
             print("there have been different reshaping configs")
             exit(-1);
         else:
-            self.reshaping_config = unique_reshaping_configs[0]
+            # Here we use the first element of the original list
+            self.reshaping_config = readReshapingConfig(results[0][1].metrics)
 
         # we do our custom aggregation here.
         print("Getting results from janus")
