@@ -79,13 +79,20 @@ class DPSAServer(Server):
         """
 
         # call dpsa4fl to create state object
-        self.dpsa4fl_state = controller_api_new_state(
-            model_size,
-            privacy_parameter,
-            granularity,
-            aggregator1_location,
-            aggregator2_location,
-        )
+        #
+        # NOTE: this might fail, e.g. if servers are not running at the given locations
+        try:
+            self.dpsa4fl_state = controller_api_new_state(
+                model_size,
+                privacy_parameter,
+                granularity,
+                aggregator1_location,
+                aggregator2_location,
+            )
+        except RuntimeError as err:
+            print("Could not initialize controller state.")
+            print(f"Are aggregator servers running at {aggregator1_location=} and {aggregator2_location=}?")
+            print(f"The original error message is: {err=}")
 
         dpsa4fl_strategy = DPSAStrategyWrapper(
             strategy = strategy if strategy is not None else FedAvg(),
