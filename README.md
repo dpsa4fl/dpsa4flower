@@ -1,7 +1,7 @@
 # dpsa4flower
 Server and client to use the [flower framework](https://flower.dev/) for differentially private federated learning with secure aggregation.
 
-Made to be used with the [dpsa infrastructure](https://github.com/dpsa-project/overview), head there for an explanation of the system's participants and properties. Setup of additional aggregation servers is required, head [here](https://github.com/dpsa-project/dpsa4fl-testing-infrastructure) for instructions.
+Made to be used with the [dpsa infrastructure](https://github.com/dpsa-project/overview), head there for an explanation of the system's participants and properties. Setup of additional aggregation servers is required, head to our [dpsa4fl infrastructore repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions.
 
 ## Installation
 To install, you require the following packages:
@@ -21,10 +21,10 @@ Use poetry to create a virtualenv and install all dependencies:
 > poetry shell
 > poetry install
 ```
-You're ready to use our classes now. Note that to actually run a learning task, you will need to provide locations at which two seperate dpsa4fl aggregation servers are running. See [here](https://github.com/dpsa-project/dpsa4fl-testing-infrastructure) for instructions or check out our example project.
+You're ready to use our classes now. Note that to actually run a learning task, you will need to provide locations at which two seperate dpsa4fl aggregation servers are running. See our [dpsa4fl infrastructore repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions or check out our example project.
 
 ## Example code
-There is a [repo](https://github.com/dpsa-project/dpsa4fl-example-project) containing an example implementation learning the CIFAR task using a torch model, where learning is federated using flower with differential privacy and secure aggregation.
+There is a [repo containing an example implementation](https://github.com/dpsa-project/dpsa4fl-example-project) learning the CIFAR task using a torch model, where learning is federated using flower with differential privacy and secure aggregation.
 
 ## Classes
 This package exposes two classes, one for the server and one for the client.
