@@ -1,25 +1,16 @@
 # dpsa4flower
 Server and client to use the [flower framework](https://flower.dev/) for differentially private federated learning with secure aggregation.
 
-Made to be used with the [dpsa infrastructure](https://github.com/dpsa-project/overview), head there for an explanation of the system's participants and properties. Setup of additional aggregation servers is required, head to our [dpsa4fl infrastructore repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions.
+Made to be used with the [dpsa infrastructure](https://github.com/dpsa-project/overview), head there for an explanation of the system's participants and properties. Setup of additional aggregation servers is required, head to our [dpsa4fl infrastructore repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions. There also is [an example implementation](https://github.com/dpsa-project/dpsa4fl-example-project).
 
 ## Installation
 To install, you require the following packages:
 - python version 3.9 or higher.
-- [poetry](https://python-poetry.org/) package manager for python
+- [pip](https://pip.pypa.io/en/stable/) package installer for python
 
-Once you have those, go ahead and clone this repository:
+Once you have those, go ahead and install our package:
 ```
-> git clone https://github.com/dpsa-project/dpsa4flower.git
-```
-Enter the new directory:
-```
-> cd dpsa4flower
-```
-Use poetry to create a virtualenv and install all dependencies:
-```
-> poetry shell
-> poetry install
+> pip install dpsa4flower
 ```
 You're ready to use our classes now. Note that to actually run a learning task, you will need to provide locations at which two seperate dpsa4fl aggregation servers are running. See our [dpsa4fl infrastructore repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions or check out our example project.
 
