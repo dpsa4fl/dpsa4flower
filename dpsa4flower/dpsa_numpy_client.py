@@ -16,7 +16,7 @@ from flwr.common.typing import Config, NDArrays, NDArray, Scalar
 
 from dpsa4fl_bindings import (
     client_api_new_state,
-    client_api_get_privacy_parameter,
+    client_api_verify_privacy_parameter,
     client_api_submit,
 )
 
@@ -229,13 +229,11 @@ class DPSANumPyClient(NumPyClient):
             norm = np.linalg.norm(flat_grad_vector)
 
         # get server privacy parameter
-        eps = client_api_get_privacy_parameter(self.dpsa4fl_client_state, task_id)
-
-        if eps > self.max_privacy_per_round:
-            raise Exception("DPSAClient requested at least " + str(self.max_privacy_per_round) + " privacy but server supplied only " + str(eps))
+        if client_api_verify_privacy_parameter(self.dpsa4fl_client_state, task_id, self.max_privacy_per_round):
+            raise Exception("DPSAClient requested at least " + str(self.max_privacy_per_round) + " privacy but server supplied worse")
         else:
             # log privacy loss
-            self.privacy_spent += eps
+            self.privacy_spent += self.max_privacy_per_round
 
             # submit data to janus
             client_api_submit(self.dpsa4fl_client_state, task_id, flat_grad_vector)
