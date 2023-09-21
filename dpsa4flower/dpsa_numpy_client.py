@@ -229,7 +229,7 @@ class DPSANumPyClient(NumPyClient):
             norm = np.linalg.norm(flat_grad_vector)
 
         # get server privacy parameter
-        if client_api_verify_privacy_parameter(self.dpsa4fl_client_state, task_id, self.max_privacy_per_round):
+        if not client_api_verify_privacy_parameter(self.dpsa4fl_client_state, task_id, self.max_privacy_per_round):
             raise Exception("DPSAClient requested at least " + str(self.max_privacy_per_round) + " privacy but server supplied worse")
         else:
             # log privacy loss
